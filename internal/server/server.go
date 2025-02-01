@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/ctroller/yagokv/internal/api"
@@ -13,9 +14,10 @@ func Setup() {
 		Storage: kvs.NewStorage(16),
 	}
 
-	http.HandleFunc("/api/get", api.GetHandler())
-	http.HandleFunc("/api/set", api.SetHandler())
-	http.HandleFunc("/api/delete", api.DeleteHandler())
+	http.HandleFunc("/api/", api.ApiHandler())
 
-	http.ListenAndServe(":8080", nil)
+	log.Println("Starting server on :8080")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
