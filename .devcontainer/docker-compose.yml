@@ -1,0 +1,11 @@
+volumes:
+  pg-data:
+
+services:
+  main:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
