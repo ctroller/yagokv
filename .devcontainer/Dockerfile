@@ -7,13 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y curl ca-certifi
 
 # Stage 2: Install Go tools
 FROM golang:1.23.0-bookworm AS go-tools
-RUN go install github.com/go-delve/delve/cmd/dlv@latest && \
-    go install honnef.co/go/tools/cmd/staticcheck@latest && \
-    go install golang.org/x/tools/cmd/goimports@latest && \
-    go install github.com/mitchellh/gox@latest && \
-    go install github.com/kyoh86/richgo@latest && \
-    go install github.com/goreleaser/goreleaser/v2@latest && \
-    go install github.com/swaggo/swag/cmd/swag@latest
+## TODO
 
 # Final stage: Main image
 FROM mcr.microsoft.com/devcontainers/go:1-1.23-bookworm AS main

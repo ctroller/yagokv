@@ -1,20 +1,23 @@
 {
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "main",
-    "name": "yagokv",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "containerUser": "vscode",
-    "remoteUser": "vscode",
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          "golang.Go",
-          "ms-azuretools.vscode-docker",
-          "esbenp.prettier-vscode",
-          "GitHub.copilot",
-          "github.vscode-github-actions",
-          "ms-vscode.makefile-tools"
-        ]
-      }
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "main",
+  "name": "yagokv",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "containerUser": "vscode",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.Go",
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot",
+        "github.vscode-github-actions",
+        "ms-vscode.makefile-tools"
+      ]
     }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   }
+}
