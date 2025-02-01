@@ -18,6 +18,7 @@ type Bucket struct {
 
 type Storage struct {
 	buckets []Bucket
+	len     int
 }
 
 func NewStorage(numBuckets int) *Storage {
@@ -28,6 +29,7 @@ func NewStorage(numBuckets int) *Storage {
 	}
 	return &Storage{
 		buckets: buckets,
+		len:     numBuckets,
 	}
 }
 
@@ -66,14 +68,14 @@ func (s *Storage) getHash(key string) uint64 {
 }
 
 func (s *Storage) getBucketIndex(key string) int {
-	return int(s.getHash(key) % uint64(len(s.buckets)))
+	return int(s.getHash(key) % uint64(s.len))
 }
 
 func (s *Storage) Get(key string) (string, error) {
 	bucket := s.buckets[s.getBucketIndex(key)]
 	bucket.mutex.RLock()
 	val := bucket.data[key]
-	bucket.mutex.RUnlock()
+	bucket.mutex.RUnlock() // don't defer, we want to release the lock as soon as possible
 
 	if val == nil {
 		return "", nil
@@ -90,14 +92,14 @@ func (s *Storage) Set(key string, value string) error {
 
 	bucket := s.buckets[s.getBucketIndex(key)]
 	bucket.mutex.Lock()
+	defer bucket.mutex.Unlock()
 	bucket.data[key] = serializedValue
-	bucket.mutex.Unlock()
 	return nil
 }
 
 func (s *Storage) Delete(key string) {
 	bucket := s.buckets[s.getBucketIndex(key)]
 	bucket.mutex.Lock()
+	defer bucket.mutex.Unlock()
 	delete(bucket.data, key)
-	bucket.mutex.Unlock()
 }
