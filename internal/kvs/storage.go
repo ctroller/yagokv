@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"hash/fnv"
+	"sync"
 )
 
 type SerializedObject struct {
@@ -11,7 +12,8 @@ type SerializedObject struct {
 }
 
 type Bucket struct {
-	data map[string]*SerializedObject
+	data  map[string]*SerializedObject
+	mutex *sync.RWMutex
 }
 
 type Storage struct {
@@ -22,7 +24,7 @@ func NewStorage(numBuckets int) *Storage {
 	buckets := make([]Bucket, numBuckets)
 
 	for i := range buckets {
-		buckets[i] = Bucket{data: make(map[string]*SerializedObject)}
+		buckets[i] = Bucket{data: make(map[string]*SerializedObject), mutex: &sync.RWMutex{}}
 	}
 	return &Storage{
 		buckets: buckets,
@@ -68,7 +70,11 @@ func (s *Storage) getBucketIndex(key string) int {
 }
 
 func (s *Storage) Get(key string) (string, error) {
-	val := s.buckets[s.getBucketIndex(key)].data[key]
+	bucket := s.buckets[s.getBucketIndex(key)]
+	bucket.mutex.RLock()
+	val := bucket.data[key]
+	bucket.mutex.RUnlock()
+
 	if val == nil {
 		return "", nil
 	}
@@ -82,10 +88,16 @@ func (s *Storage) Set(key string, value string) error {
 		return err
 	}
 
-	s.buckets[s.getBucketIndex(key)].data[key] = serializedValue
+	bucket := s.buckets[s.getBucketIndex(key)]
+	bucket.mutex.Lock()
+	bucket.data[key] = serializedValue
+	bucket.mutex.Unlock()
 	return nil
 }
 
 func (s *Storage) Delete(key string) {
-	delete(s.buckets[s.getBucketIndex(key)].data, key)
+	bucket := s.buckets[s.getBucketIndex(key)]
+	bucket.mutex.Lock()
+	delete(bucket.data, key)
+	bucket.mutex.Unlock()
 }
