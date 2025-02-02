@@ -14,7 +14,7 @@ func Setup() {
 		Storage: kvs.NewStorage(16),
 	}
 
-	http.HandleFunc("/api/", api.ApiHandler())
+	http.HandleFunc("/api/v1/kvs/", api.ApiKvsHandler())
 
 	log.Println("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
