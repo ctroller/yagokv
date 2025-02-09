@@ -6,7 +6,7 @@ import (
 
 	"github.com/ctroller/yagokv/internal/api"
 	"github.com/ctroller/yagokv/internal/inject"
-	"github.com/ctroller/yagokv/internal/kvs"
+	"github.com/ctroller/yagokv/pkg/kvs"
 )
 
 func Setup() {

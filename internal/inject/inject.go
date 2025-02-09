@@ -1,6 +1,6 @@
 package inject
 
-import "github.com/ctroller/yagokv/internal/kvs"
+import "github.com/ctroller/yagokv/pkg/kvs"
 
 type Application struct {
 	Storage *kvs.Storage
