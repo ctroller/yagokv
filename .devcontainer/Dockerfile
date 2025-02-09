@@ -23,7 +23,7 @@ ENV CGO_ENABLED=0
 
 # Update and install dependencies
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y git curl && \
+    apt-get install --no-install-recommends -y git curl ca-certificates && \
     # Clean up
     apt-get autoremove -y && apt-get clean -y
 

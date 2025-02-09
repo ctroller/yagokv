@@ -1,0 +1,44 @@
+# YAML
+name: CI - Go Client
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/clients/go/go.sum') }}
+
+      - name: Install dependencies
+        run: |
+          cd clients/go
+          go mod tidy
+
+      - name: Run tests
+        run: |
+          cd clients/go
+          go test ./...
+
+      - name: Build go-client executable
+        run: |
+          cd clients/go
+          go build -o yagokv-client .
